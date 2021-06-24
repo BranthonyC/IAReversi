@@ -33,13 +33,15 @@ function getMyposiciones(turno, tablero) {
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
       if (turno == tablero[i][j]) {
-        posiciones[contador] = { row: i, column: j };
+        posiciones[contador] = {
+          row: i,
+          column: j,
+          value: calcValue({ row: i, column: j }),
+        };
         contador++;
       }
     }
   }
-  console.log("Tenemos fichas de nuestro turno en.");
-  console.log(posiciones);
   return posiciones;
 }
 
@@ -77,83 +79,127 @@ function keeploking(posicion, turno) {
  * las casillas visitadas, el valor de las casillas se tomara de la euristica.
  */
 function followTrail(posicion, valor) {
-  console.log("Visitando la posicion ");
-  console.dir(posicion);
-  console.log("-----------------");
-  valor += valor;
+  valor += calcValue(posicion);
   try {
     if (posicion.direccion == "N") {
-      console.log("Going N");
+      // console.log("Going N");
+      let nex_position = {
+        ...posicion,
+        row: posicion.row - 1,
+        column: posicion.column,
+      };
       if (keeploking(posicion)) {
-        return followTrail(
-          { ...posicion, row: posicion.row - 1, column: posicion.column },
-          calcValue(posicion)
-        );
+        return followTrail(nex_position, calcValue(posicion));
       }
-      return valor;
-    } else if (posicion.direccion == "NE") {
-      console.log("Going NE");
+      return {
+        ...nex_position,
+        heuristica: valor + calcValue(nex_position),
+      };
+    }
+    if (posicion.direccion == "NE") {
+      // console.log("Going NE");
+      let nex_position = {
+        ...posicion,
+        row: posicion.row - 1,
+        column: posicion.column + 1,
+      };
       if (keeploking(posicion)) {
-        return followTrail(
-          { ...posicion, row: posicion.row - 1, column: posicion.column + 1 },
-          calcValue(posicion)
-        );
+        return followTrail(nex_position, calcValue(posicion));
       }
-      return valor;
-    } else if (posicion.direccion == "E") {
-      console.log("Going E");
+      return {
+        ...nex_position,
+        heuristica: valor + calcValue(nex_position),
+      };
+    }
+    if (posicion.direccion == "E") {
+      // console.log("Going E");
+      let nex_position = {
+        ...posicion,
+        row: posicion.row,
+        column: posicion.column + 1,
+      };
       if (keeploking(posicion)) {
-        return followTrail(
-          { ...posicion, row: posicion.row, column: posicion.column + 1 },
-          calcValue(posicion)
-        );
+        return followTrail(nex_position, calcValue(posicion));
       }
-      return valor;
-    } else if (posicion.direccion == "SE") {
-      console.log("Going SE");
+      return {
+        ...nex_position,
+        heuristica: valor + calcValue(nex_position),
+      };
+    }
+    if (posicion.direccion == "SE") {
+      // console.log("Going SE");
+      let nex_position = {
+        ...posicion,
+        row: posicion.row + 1,
+        column: posicion.column + 1,
+      };
       if (keeploking(posicion)) {
-        return followTrail(
-          { ...posicion, row: posicion.row + 1, column: posicion.column + 1 },
-          calcValue(posicion)
-        );
+        return followTrail(nex_position, calcValue(posicion));
       }
-      return valor;
-    } else if (posicion.direccion == "S") {
-      console.log("Going S");
+      return {
+        ...nex_position,
+        heuristica: valor + calcValue(nex_position),
+      };
+    }
+    if (posicion.direccion == "S") {
+      // console.log("Going S");
+      let nex_position = {
+        ...posicion,
+        row: posicion.row + 1,
+        column: posicion.column,
+      };
       if (keeploking(posicion)) {
-        return followTrail(
-          { ...posicion, row: posicion.row + 1, column: posicion.column },
-          calcValue(posicion)
-        );
+        return followTrail(nex_position, calcValue(posicion));
       }
-      return valor;
-    } else if (posicion.direccion == "SO") {
-      console.log("Going SO");
+      return {
+        ...nex_position,
+        heuristica: valor + calcValue(nex_position),
+      };
+    }
+    if (posicion.direccion == "SO") {
+      // console.log("Going SO");
+      let nex_position = {
+        ...posicion,
+        row: posicion.row + 1,
+        column: posicion.column - 1,
+      };
       if (keeploking(posicion)) {
-        return followTrail(
-          { ...posicion, row: posicion.row + 1, column: posicion.column - 1 },
-          calcValue(posicion)
-        );
+        return followTrail(nex_position, calcValue(posicion));
       }
-      return valor;
-    } else if (posicion.direccion == "O") {
-      console.log("Going O");
+      return {
+        ...nex_position,
+        heuristica: valor + calcValue(nex_position),
+      };
+    }
+    if (posicion.direccion == "O") {
+      // console.log("Going O");
+      let nex_position = {
+        ...posicion,
+        row: posicion.row,
+        column: posicion.column - 1,
+      };
       if (keeploking(posicion)) {
-        return followTrail(
-          { ...posicion, row: posicion.row, column: posicion.column - 1 },
-          calcValue(posicion)
-        );
+        return followTrail(nex_position, calcValue(posicion));
       }
-      return valor;
-    } else if (posicion.direccion == "NO") {
-      console.log("Going No");
+      return {
+        ...nex_position,
+        heuristica: valor + calcValue(nex_position),
+      };
+    }
+    if (posicion.direccion == "NO") {
+      // console.log("Going No");
+      let nex_position = {
+        ...posicion,
+        row: posicion.row - 1,
+        column: posicion.column - 1,
+      };
       if (keeploking(posicion)) {
-        return followTrail(
-          { ...posicion, row: posicion.row - 1, column: posicion.column - 1 },
-          calcValue(posicion)
-        );
+        return followTrail(nex_position, calcValue(posicion));
       }
-      return valor;
+      return {
+        ...nex_position,
+        heuristica: valor + calcValue(nex_position),
+      };
     }
   } catch (TypeError) {
     console.log("No se pudo encontrar una posicion valida para la ficha.");
@@ -171,28 +217,28 @@ function getValidMoves(turno, posiciones, tablero) {
   let column = 0;
   let valid_moves = [];
   let contador = 0;
+
   for (let i = 0; i < posiciones.length; i++) {
-    console.log("Iterando: ");
-    console.log(contador);
-    console.log("----");
     row = posiciones[i].row;
     column = posiciones[i].column;
-    let N = tablero[row - 1][column];
-    let NE = tablero[row - 1][column + 1];
-    let E = tablero[row][column + 1];
-    let SE = tablero[row + 1][column + 1];
-    let S = tablero[row + 1][column];
-    let SO = tablero[row + 1][column - 1];
-    let O = tablero[row][column - 1];
-    let NO = tablero[row - 1][column - 1];
+    value = posiciones[i].value;
     // una casilla tiene 8 vecinos si NO esta en los bordes del tablero.
     if (row != 0 && row != 7 && column != 0 && column != 7) {
+      let N = tablero[row - 1][column];
+      let NE = tablero[row - 1][column + 1];
+      let E = tablero[row][column + 1];
+      let SE = tablero[row + 1][column + 1];
+      let S = tablero[row + 1][column];
+      let SO = tablero[row + 1][column - 1];
+      let O = tablero[row][column - 1];
+      let NO = tablero[row - 1][column - 1];
       // N
       if (N != "2" && N != turno) {
         valid_moves.push({
           row: row - 1,
           column: column,
           direccion: "N",
+          value: value,
         });
       }
       // NE
@@ -201,6 +247,7 @@ function getValidMoves(turno, posiciones, tablero) {
           row: row - 1,
           column: column + 1,
           direccion: "NE",
+          value: value,
         });
       }
       // E
@@ -209,6 +256,7 @@ function getValidMoves(turno, posiciones, tablero) {
           row: row,
           column: column + 1,
           direccion: "E",
+          value: value,
         });
       }
       // SE
@@ -217,6 +265,7 @@ function getValidMoves(turno, posiciones, tablero) {
           row: row + 1,
           column: column + 1,
           direccion: "SE",
+          value: value,
         });
       }
       // S
@@ -225,6 +274,7 @@ function getValidMoves(turno, posiciones, tablero) {
           row: row + 1,
           column: column,
           direccion: "S",
+          value: value,
         });
       }
       // So
@@ -233,6 +283,7 @@ function getValidMoves(turno, posiciones, tablero) {
           row: row + 1,
           column: column - 1,
           direccion: "SO",
+          value: value,
         });
       }
       // O
@@ -241,6 +292,7 @@ function getValidMoves(turno, posiciones, tablero) {
           row: row,
           column: column - 1,
           direccion: "O",
+          value: value,
         });
       }
       // No
@@ -249,6 +301,7 @@ function getValidMoves(turno, posiciones, tablero) {
           row: row - 1,
           column: column - 1,
           direccion: "No",
+          value: value,
         });
       }
     }
@@ -267,7 +320,21 @@ function showtablero(tablero) {
   }
 }
 
+function moveTo(posibles_movimientos) {
+  let max = 0;
+  let max_index = 0;
+  for (let i = 0; i < posibles_movimientos.length; i++) {
+    if (posibles_movimientos[i].heuristica > max) {
+      max = posibles_movimientos[i].heuristica;
+      max_index = i;
+    }
+  }
+  let o = posibles_movimientos[max_index];
+  return `${o.row}${o.column}`;
+}
+
 app.get("/", (req, res) => {
+  console.log("JUGANDO TURNO---------------------");
   let turno = req.query.turno;
   let estado = req.query.estado;
   if (estado) {
@@ -279,12 +346,17 @@ app.get("/", (req, res) => {
     let posiciones = getMyposiciones(turno, gametablero);
     let valid_moves = getValidMoves(turno, posiciones, gametablero);
     // Analizando opciones Min Max
-    console.log("Min max values");
+    //
+    // arbol de un solo nivel
+
+    let arbol = [];
     for (let i = 0; i < valid_moves.length; i++) {
-      console.log(followTrail(valid_moves[i], calcValue(valid_moves[i]))); // El valor se suma al inicio de followTrail
+      arbol.push(followTrail(valid_moves[i], valid_moves[i].value));
     }
+    console.log("Posiciones posibles y su heuristica");
+    console.log(arbol);
     showtablero(gametablero);
-    return res.send("24");
+    return res.send(`${moveTo(arbol)}`);
   }
   console.log("No hay estado");
   res.send("24");
