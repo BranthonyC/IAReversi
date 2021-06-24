@@ -2,56 +2,189 @@ const express = require("express"); //Import the express dependency
 const app = express(); //Instantiate an express app, the main work horse of this server
 const port = 8080; //Save the port number where your server will be listening
 
-var gameBoard = new Array(8);
-for (let i = 0; i < gameBoard.length; i++) {
-  gameBoard[i] = new Array(8);
+var gametablero = new Array(8);
+for (let i = 0; i < gametablero.length; i++) {
+  gametablero[i] = new Array(8);
 }
+
+const heuristica = new Array(8);
+heuristica[0] = [120, -20, 20, 5, 5, 20, -20, 120];
+heuristica[1] = [-20, -40, -5, -5, -5, -5, -40, -20];
+heuristica[2] = [20, -5, 15, 3, 3, 15, -5, -20];
+heuristica[3] = [5, -5, 3, 3, 3, 3, -5, 5];
+heuristica[4] = [5, -5, 3, 3, 3, 3, -5, 5];
+heuristica[5] = [20, -5, 15, 3, 3, 15, -5, -20];
+heuristica[6] = [-20, -40, -5, -5, -5, -5, -40, -20];
+heuristica[7] = [120, -20, 20, 5, 5, 20, -20, 120];
 
 function mapToMatrix(estado) {
   let iterador = 0;
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
-      gameBoard[i][j] = estado[iterador];
+      gametablero[i][j] = estado[iterador];
       iterador++;
     }
   }
 }
 
-function getMyPositions(turno, board) {
-  let positions = [];
+function getMyposiciones(turno, tablero) {
+  let posiciones = [];
   let contador = 0;
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
-      if (turno == board[i][j]) {
-        positions[contador] = { row: i, column: j };
+      if (turno == tablero[i][j]) {
+        posiciones[contador] = { row: i, column: j };
         contador++;
       }
     }
   }
   console.log("Tenemos fichas de nuestro turno en.");
-  console.log(positions);
-  return positions;
+  console.log(posiciones);
+  return posiciones;
 }
 
-function getValidMoves(turno, positions, board) {
+/**
+ * Dada una posicion retorna un valor acorde a la matriz
+ * de euristicas.
+ */
+function calcValue(posicion) {
+  return heuristica[posicion.row][posicion.column];
+}
+
+/**
+ * Verifica si en la posicion que recibe como parametro existe una ficha
+ * que me permita continuar buscando.
+ */
+function keeploking(posicion, turno) {
+  // Solamente busco posiciones validas, es decir posiciones en blanco, si de repente
+  // tengo todas las fichas en esa direccion de mi color las ignoro.
+  if (gametablero[posicion.row][posicion.column] === 2) {
+    return true; // Ya no necesito buscar
+  }
+  return false;
+}
+/**
+ * Dada una posicion y una direccion, seguira en busca de una
+ * posicion vacia en la direccion dada, si no esta vacia y no es
+ * del mismo turno entonces retorna la misma funcion en busca de
+ * la siguiente tabla.
+ *
+ * Funcion recursiva, devolvera 0 para indicar que no se pudo colocar
+ * la ficha en caso llegue a los bordes del tablero sin encontrar un espacio
+ * libre.
+ *
+ * Al ser recursiva devolvera un valor que sera la sumatoria de todas
+ * las casillas visitadas, el valor de las casillas se tomara de la euristica.
+ */
+function followTrail(posicion, valor) {
+  console.log("Visitando la posicion ");
+  console.dir(posicion);
+  console.log("-----------------");
+  valor += valor;
+  try {
+    if (posicion.direccion == "N") {
+      console.log("Going N");
+      if (keeploking(posicion)) {
+        return followTrail(
+          { ...posicion, row: posicion.row - 1, column: posicion.column },
+          calcValue(posicion)
+        );
+      }
+      return valor;
+    } else if (posicion.direccion == "NE") {
+      console.log("Going NE");
+      if (keeploking(posicion)) {
+        return followTrail(
+          { ...posicion, row: posicion.row - 1, column: posicion.column + 1 },
+          calcValue(posicion)
+        );
+      }
+      return valor;
+    } else if (posicion.direccion == "E") {
+      console.log("Going E");
+      if (keeploking(posicion)) {
+        return followTrail(
+          { ...posicion, row: posicion.row, column: posicion.column + 1 },
+          calcValue(posicion)
+        );
+      }
+      return valor;
+    } else if (posicion.direccion == "SE") {
+      console.log("Going SE");
+      if (keeploking(posicion)) {
+        return followTrail(
+          { ...posicion, row: posicion.row + 1, column: posicion.column + 1 },
+          calcValue(posicion)
+        );
+      }
+      return valor;
+    } else if (posicion.direccion == "S") {
+      console.log("Going S");
+      if (keeploking(posicion)) {
+        return followTrail(
+          { ...posicion, row: posicion.row + 1, column: posicion.column },
+          calcValue(posicion)
+        );
+      }
+      return valor;
+    } else if (posicion.direccion == "SO") {
+      console.log("Going SO");
+      if (keeploking(posicion)) {
+        return followTrail(
+          { ...posicion, row: posicion.row + 1, column: posicion.column - 1 },
+          calcValue(posicion)
+        );
+      }
+      return valor;
+    } else if (posicion.direccion == "O") {
+      console.log("Going O");
+      if (keeploking(posicion)) {
+        return followTrail(
+          { ...posicion, row: posicion.row, column: posicion.column - 1 },
+          calcValue(posicion)
+        );
+      }
+      return valor;
+    } else if (posicion.direccion == "NO") {
+      console.log("Going No");
+      if (keeploking(posicion)) {
+        return followTrail(
+          { ...posicion, row: posicion.row - 1, column: posicion.column - 1 },
+          calcValue(posicion)
+        );
+      }
+      return valor;
+    }
+  } catch (TypeError) {
+    console.log("No se pudo encontrar una posicion valida para la ficha.");
+    return 0; // No se pudo encontrar una posicion a la ficha
+  }
+
+  // Condiciones de salida
+  // if (posicion.row - 1 <= 0 || posicion.column - 1 <= 0) {
+  //   return 0; // No se pudo colocar una ficha
+  // }
+}
+
+function getValidMoves(turno, posiciones, tablero) {
   let row = 0;
   let column = 0;
   let valid_moves = [];
   let contador = 0;
-  for (let i = 0; i < positions.length; i++) {
+  for (let i = 0; i < posiciones.length; i++) {
     console.log("Iterando: ");
     console.log(contador);
     console.log("----");
-    row = positions[i].row;
-    column = positions[i].column;
-    let N = board[row - 1][column];
-    let NE = board[row - 1][column + 1];
-    let E = board[row][column + 1];
-    let SE = board[row + 1][column + 1];
-    let S = board[row + 1][column];
-    let SO = board[row + 1][column - 1];
-    let O = board[row][column - 1];
-    let NO = board[row - 1][column - 1];
+    row = posiciones[i].row;
+    column = posiciones[i].column;
+    let N = tablero[row - 1][column];
+    let NE = tablero[row - 1][column + 1];
+    let E = tablero[row][column + 1];
+    let SE = tablero[row + 1][column + 1];
+    let S = tablero[row + 1][column];
+    let SO = tablero[row + 1][column - 1];
+    let O = tablero[row][column - 1];
+    let NO = tablero[row - 1][column - 1];
     // una casilla tiene 8 vecinos si NO esta en los bordes del tablero.
     if (row != 0 && row != 7 && column != 0 && column != 7) {
       // N
@@ -59,7 +192,7 @@ function getValidMoves(turno, positions, board) {
         valid_moves.push({
           row: row - 1,
           column: column,
-          direction: "N",
+          direccion: "N",
         });
       }
       // NE
@@ -67,7 +200,7 @@ function getValidMoves(turno, positions, board) {
         valid_moves.push({
           row: row - 1,
           column: column + 1,
-          direction: "NE",
+          direccion: "NE",
         });
       }
       // E
@@ -75,7 +208,7 @@ function getValidMoves(turno, positions, board) {
         valid_moves.push({
           row: row,
           column: column + 1,
-          direction: "E",
+          direccion: "E",
         });
       }
       // SE
@@ -83,7 +216,7 @@ function getValidMoves(turno, positions, board) {
         valid_moves.push({
           row: row + 1,
           column: column + 1,
-          direction: "SE",
+          direccion: "SE",
         });
       }
       // S
@@ -91,7 +224,7 @@ function getValidMoves(turno, positions, board) {
         valid_moves.push({
           row: row + 1,
           column: column,
-          direction: "S",
+          direccion: "S",
         });
       }
       // So
@@ -99,7 +232,7 @@ function getValidMoves(turno, positions, board) {
         valid_moves.push({
           row: row + 1,
           column: column - 1,
-          direction: "SO",
+          direccion: "SO",
         });
       }
       // O
@@ -107,7 +240,7 @@ function getValidMoves(turno, positions, board) {
         valid_moves.push({
           row: row,
           column: column - 1,
-          direction: "O",
+          direccion: "O",
         });
       }
       // No
@@ -115,7 +248,7 @@ function getValidMoves(turno, positions, board) {
         valid_moves.push({
           row: row - 1,
           column: column - 1,
-          direction: "No",
+          direccion: "No",
         });
       }
     }
@@ -128,9 +261,9 @@ function getValidMoves(turno, positions, board) {
   return valid_moves;
 }
 
-function showBoard(board) {
+function showtablero(tablero) {
   for (let i = 0; i < 8; i++) {
-    console.log(board[i]);
+    console.log(tablero[i]);
   }
 }
 
@@ -140,10 +273,17 @@ app.get("/", (req, res) => {
   if (estado) {
     console.log(turno);
     mapToMatrix(estado);
+    {
+    }
     // Recuperamos las fichas de nuestra posicion.
-    let positions = getMyPositions(turno, gameBoard);
-    let valid_moves = getValidMoves(turno, positions, gameBoard);
-    showBoard(gameBoard);
+    let posiciones = getMyposiciones(turno, gametablero);
+    let valid_moves = getValidMoves(turno, posiciones, gametablero);
+    // Analizando opciones Min Max
+    console.log("Min max values");
+    for (let i = 0; i < valid_moves.length; i++) {
+      console.log(followTrail(valid_moves[i], calcValue(valid_moves[i]))); // El valor se suma al inicio de followTrail
+    }
+    showtablero(gametablero);
     return res.send("24");
   }
   console.log("No hay estado");
