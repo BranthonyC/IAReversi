@@ -63,6 +63,7 @@ function keeploking(posicion, turno) {
   if (gametablero[posicion.row][posicion.column] === 2) {
     return true; // Ya no necesito buscar
   }
+
   return false;
 }
 /**
@@ -83,6 +84,13 @@ function followTrail(posicion, valor) {
   try {
     if (posicion.direccion == "N") {
       // console.log("Going N");
+      // Condicion de salida en busqueda norte
+      if (posicion.row == 0) {
+        return {
+          ...posicion,
+          heuristica: valor,
+        };
+      }
       let nex_position = {
         ...posicion,
         row: posicion.row - 1,
@@ -91,13 +99,23 @@ function followTrail(posicion, valor) {
       if (keeploking(posicion)) {
         return followTrail(nex_position, calcValue(posicion));
       }
+
       return {
         ...nex_position,
         heuristica: valor + calcValue(nex_position),
       };
     }
+
     if (posicion.direccion == "NE") {
       // console.log("Going NE");
+      // Condicion de salida en busqueda noroeste
+      if (posicion.column == 7 || posicion.row == 0) {
+        return {
+          ...posicion,
+          heuristica: valor,
+        };
+      }
+
       let nex_position = {
         ...posicion,
         row: posicion.row - 1,
@@ -113,6 +131,13 @@ function followTrail(posicion, valor) {
     }
     if (posicion.direccion == "E") {
       // console.log("Going E");
+      // Condicion de salida en busqueda este
+      if (posicion.column == 7) {
+        return {
+          ...posicion,
+          heuristica: valor,
+        };
+      }
       let nex_position = {
         ...posicion,
         row: posicion.row,
@@ -128,6 +153,13 @@ function followTrail(posicion, valor) {
     }
     if (posicion.direccion == "SE") {
       // console.log("Going SE");
+      // Condicion de salida en busqueda sureste
+      if (posicion.column == 7 || posicion.row == 7) {
+        return {
+          ...posicion,
+          heuristica: valor,
+        };
+      }
       let nex_position = {
         ...posicion,
         row: posicion.row + 1,
@@ -143,6 +175,13 @@ function followTrail(posicion, valor) {
     }
     if (posicion.direccion == "S") {
       // console.log("Going S");
+      // Condicion de salida en busqueda sur
+      if (posicion.row == 7) {
+        return {
+          ...posicion,
+          heuristica: valor,
+        };
+      }
       let nex_position = {
         ...posicion,
         row: posicion.row + 1,
@@ -158,6 +197,13 @@ function followTrail(posicion, valor) {
     }
     if (posicion.direccion == "SO") {
       // console.log("Going SO");
+      // Condicion de salida en busqueda sur oeste
+      if (posicion.column == 0 || posicion.row == 7) {
+        return {
+          ...posicion,
+          heuristica: valor,
+        };
+      }
       let nex_position = {
         ...posicion,
         row: posicion.row + 1,
@@ -173,6 +219,13 @@ function followTrail(posicion, valor) {
     }
     if (posicion.direccion == "O") {
       // console.log("Going O");
+      // Condicion de salida en busqueda oeste
+      if (posicion.column == 0) {
+        return {
+          ...posicion,
+          heuristica: valor,
+        };
+      }
       let nex_position = {
         ...posicion,
         row: posicion.row,
@@ -188,6 +241,13 @@ function followTrail(posicion, valor) {
     }
     if (posicion.direccion == "NO") {
       // console.log("Going No");
+      // Condicion de salida en busqueda noroeste
+      if (posicion.column == 0 || posicion.row == 0) {
+        return {
+          ...posicion,
+          heuristica: valor,
+        };
+      }
       let nex_position = {
         ...posicion,
         row: posicion.row - 1,
@@ -216,14 +276,15 @@ function getValidMoves(turno, posiciones, tablero) {
   let row = 0;
   let column = 0;
   let valid_moves = [];
-  let contador = 0;
 
+  // try {
+  console.dir(posiciones);
   for (let i = 0; i < posiciones.length; i++) {
     row = posiciones[i].row;
     column = posiciones[i].column;
     value = posiciones[i].value;
     // una casilla tiene 8 vecinos si NO esta en los bordes del tablero.
-    if (row != 0 && row != 7 && column != 0 && column != 7) {
+    if (row > 0 && row < 7 && column > 0 && column < 7) {
       let N = tablero[row - 1][column];
       let NE = tablero[row - 1][column + 1];
       let E = tablero[row][column + 1];
@@ -304,41 +365,378 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
+    } else if (row > 0 && row < 7 && column == 0) {
+      let N = tablero[row - 1][column];
+      let NE = tablero[row - 1][column + 1];
+      let E = tablero[row][column + 1];
+      let SE = tablero[row + 1][column + 1];
+      let S = tablero[row + 1][column];
+      // N
+      if (N != "2" && N != turno) {
+        valid_moves.push({
+          row: row - 1,
+          column: column,
+          direccion: "N",
+          value: value,
+        });
+      }
+      // NE
+      if (NE != "2" && NE != turno) {
+        valid_moves.push({
+          row: row - 1,
+          column: column + 1,
+          direccion: "NE",
+          value: value,
+        });
+      }
+      // E
+      if (E != "2" && E != turno) {
+        valid_moves.push({
+          row: row,
+          column: column + 1,
+          direccion: "E",
+          value: value,
+        });
+      }
+      // SE
+      if (SE != "2" && SE != turno) {
+        valid_moves.push({
+          row: row + 1,
+          column: column + 1,
+          direccion: "SE",
+          value: value,
+        });
+      }
+      // S
+      if (S != "2" && S != turno) {
+        valid_moves.push({
+          row: row + 1,
+          column: column,
+          direccion: "S",
+          value: value,
+        });
+      }
+    } else if (row > 0 && row < 7 && column == 7) {
+      let N = tablero[row - 1][column];
+      let S = tablero[row + 1][column];
+      let SO = tablero[row + 1][column - 1];
+      let O = tablero[row][column - 1];
+      let NO = tablero[row - 1][column - 1];
+      // N
+      if (N != "2" && N != turno) {
+        valid_moves.push({
+          row: row - 1,
+          column: column,
+          direccion: "N",
+          value: value,
+        });
+      }
+      // S
+      if (S != "2" && S != turno) {
+        valid_moves.push({
+          row: row + 1,
+          column: column,
+          direccion: "S",
+          value: value,
+        });
+      }
+      // So
+      if (SO != "2" && SO != turno) {
+        valid_moves.push({
+          row: row + 1,
+          column: column - 1,
+          direccion: "SO",
+          value: value,
+        });
+      }
+      // O
+      if (O != "2" && O != turno) {
+        valid_moves.push({
+          row: row,
+          column: column - 1,
+          direccion: "O",
+          value: value,
+        });
+      }
+      // No
+      if (NO != "2" && NO != turno) {
+        valid_moves.push({
+          row: row - 1,
+          column: column - 1,
+          direccion: "No",
+          value: value,
+        });
+      }
+    } else if (column > 0 && column < 7 && row == 0) {
+      let E = tablero[row][column + 1];
+      let SE = tablero[row + 1][column + 1];
+      let S = tablero[row + 1][column];
+      let SO = tablero[row + 1][column - 1];
+      let O = tablero[row][column - 1];
+      // E
+      if (E != "2" && E != turno) {
+        valid_moves.push({
+          row: row,
+          column: column + 1,
+          direccion: "E",
+          value: value,
+        });
+      }
+      // SE
+      if (SE != "2" && SE != turno) {
+        valid_moves.push({
+          row: row + 1,
+          column: column + 1,
+          direccion: "SE",
+          value: value,
+        });
+      }
+      // S
+      if (S != "2" && S != turno) {
+        valid_moves.push({
+          row: row + 1,
+          column: column,
+          direccion: "S",
+          value: value,
+        });
+      }
+      // So
+      if (SO != "2" && SO != turno) {
+        valid_moves.push({
+          row: row + 1,
+          column: column - 1,
+          direccion: "SO",
+          value: value,
+        });
+      }
+      // O
+      if (O != "2" && O != turno) {
+        valid_moves.push({
+          row: row,
+          column: column - 1,
+          direccion: "O",
+          value: value,
+        });
+      }
+    } else if (column > 0 && column < 7 && row == 7) {
+      let N = tablero[row - 1][column];
+      let NE = tablero[row - 1][column + 1];
+      let E = tablero[row][column + 1];
+      let O = tablero[row][column - 1];
+      let NO = tablero[row - 1][column - 1];
+      // N
+      if (N != "2" && N != turno) {
+        valid_moves.push({
+          row: row - 1,
+          column: column,
+          direccion: "N",
+          value: value,
+        });
+      }
+      // NE
+      if (NE != "2" && NE != turno) {
+        valid_moves.push({
+          row: row - 1,
+          column: column + 1,
+          direccion: "NE",
+          value: value,
+        });
+      }
+      // E
+      if (E != "2" && E != turno) {
+        valid_moves.push({
+          row: row,
+          column: column + 1,
+          direccion: "E",
+          value: value,
+        });
+      }
+      // O
+      if (O != "2" && O != turno) {
+        valid_moves.push({
+          row: row,
+          column: column - 1,
+          direccion: "O",
+          value: value,
+        });
+      }
+      // No
+      if (NO != "2" && NO != turno) {
+        valid_moves.push({
+          row: row - 1,
+          column: column - 1,
+          direccion: "No",
+          value: value,
+        });
+      }
+    } else if (column == 0 && row == 0) {
+      let E = tablero[row][column + 1];
+      let SE = tablero[row + 1][column + 1];
+      let S = tablero[row + 1][column];
+      // E
+      if (E != "2" && E != turno) {
+        valid_moves.push({
+          row: row,
+          column: column + 1,
+          direccion: "E",
+          value: value,
+        });
+      }
+      // SE
+      if (SE != "2" && SE != turno) {
+        valid_moves.push({
+          row: row + 1,
+          column: column + 1,
+          direccion: "SE",
+          value: value,
+        });
+      }
+      // S
+      if (S != "2" && S != turno) {
+        valid_moves.push({
+          row: row + 1,
+          column: column,
+          direccion: "S",
+          value: value,
+        });
+      }
+    } else if (column == 7 && row == 0) {
+      let S = tablero[row + 1][column];
+      let SO = tablero[row + 1][column - 1];
+      let O = tablero[row][column - 1];
+      // S
+      if (S != "2" && S != turno) {
+        valid_moves.push({
+          row: row + 1,
+          column: column,
+          direccion: "S",
+          value: value,
+        });
+      }
+      // So
+      if (SO != "2" && SO != turno) {
+        valid_moves.push({
+          row: row + 1,
+          column: column - 1,
+          direccion: "SO",
+          value: value,
+        });
+      }
+      // O
+      if (O != "2" && O != turno) {
+        valid_moves.push({
+          row: row,
+          column: column - 1,
+          direccion: "O",
+          value: value,
+        });
+      }
+    } else if (column == 7 && row == 7) {
+      let N = tablero[row - 1][column];
+      let O = tablero[row][column - 1];
+      let NO = tablero[row - 1][column - 1];
+      // N
+      if (N != "2" && N != turno) {
+        valid_moves.push({
+          row: row - 1,
+          column: column,
+          direccion: "N",
+          value: value,
+        });
+      }
+      // O
+      if (O != "2" && O != turno) {
+        valid_moves.push({
+          row: row,
+          column: column - 1,
+          direccion: "O",
+          value: value,
+        });
+      }
+      // No
+      if (NO != "2" && NO != turno) {
+        valid_moves.push({
+          row: row - 1,
+          column: column - 1,
+          direccion: "No",
+          value: value,
+        });
+      }
+    } else if (column == 0 && row == 7) {
+      let N = tablero[row - 1][column];
+      let NE = tablero[row - 1][column + 1];
+      let E = tablero[row][column + 1];
+      // N
+      if (N != "2" && N != turno) {
+        valid_moves.push({
+          row: row - 1,
+          column: column,
+          direccion: "N",
+          value: value,
+        });
+      }
+      // NE
+      if (NE != "2" && NE != turno) {
+        valid_moves.push({
+          row: row - 1,
+          column: column + 1,
+          direccion: "NE",
+          value: value,
+        });
+      }
+      // E
+      if (E != "2" && E != turno) {
+        valid_moves.push({
+          row: row,
+          column: column + 1,
+          direccion: "E",
+          value: value,
+        });
+      }
+    } else {
+      console.log("TURNO EN LOS BORDES");
+      console.log("ROW=" + row);
+      console.log("COLUMN=" + column);
     }
     // Una casilla tiene
     // Aumenta el contador de posisiones validas.
-    contador++;
   }
-  console.log("Movimientos validos");
   console.log(valid_moves);
+  // } catch (error) {
+  //   console.log("Error de no se porque realmente");
+  // }
+  // console.log("Movimientos validos");
+  // console.log(valid_moves);
   return valid_moves;
 }
 
 function showtablero(tablero) {
+  console.log([0, 1, 2, 3, 4, 5, 6, 7]);
   for (let i = 0; i < 8; i++) {
-    console.log(tablero[i]);
+    console.log(i + "):" + tablero[i]);
   }
 }
 
 function moveTo(posibles_movimientos) {
-  let max = 0;
-  let max_index = 0;
-  for (let i = 0; i < posibles_movimientos.length; i++) {
-    if (posibles_movimientos[i].heuristica > max) {
-      max = posibles_movimientos[i].heuristica;
-      max_index = i;
+  if (posibles_movimientos.length > 0) {
+    let max = -99999;
+    let max_index = 0;
+    for (let i = 0; i < posibles_movimientos.length; i++) {
+      if (posibles_movimientos[i].heuristica > max) {
+        max = posibles_movimientos[i].heuristica;
+        max_index = i;
+      }
     }
+    let o = posibles_movimientos[max_index];
+    return `${o.row}${o.column}`;
   }
-  let o = posibles_movimientos[max_index];
-  return `${o.row}${o.column}`;
+  return "00";
 }
 
 app.get("/", (req, res) => {
-  console.log("JUGANDO TURNO---------------------");
   let turno = req.query.turno;
   let estado = req.query.estado;
   if (estado) {
-    console.log(turno);
     mapToMatrix(estado);
     {
     }
@@ -350,13 +748,19 @@ app.get("/", (req, res) => {
     // arbol de un solo nivel
 
     let arbol = [];
-    for (let i = 0; i < valid_moves.length; i++) {
-      arbol.push(followTrail(valid_moves[i], valid_moves[i].value));
-    }
-    console.log("Posiciones posibles y su heuristica");
-    console.log(arbol);
+    // console.log(valid_moves);
     showtablero(gametablero);
-    return res.send(`${moveTo(arbol)}`);
+    for (let i = 0; i < valid_moves.length; i++) {
+      let result = followTrail(valid_moves[i], valid_moves[i].value);
+      // if (result && result != 0) {
+      if (gametablero[result.row][result.column] === "2") {
+        arbol.push(result);
+      }
+      // }
+    }
+    let move_to = `${moveTo(arbol)}`;
+    console.log("IA: MOVED TO " + move_to);
+    return res.send(move_to);
   }
   console.log("No hay estado");
   res.send("24");
