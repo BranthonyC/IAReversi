@@ -8,14 +8,14 @@ for (let i = 0; i < gametablero.length; i++) {
 }
 
 const heuristica = new Array(8);
-heuristica[0] = [120, -20, 20, 5, 5, 20, -20, 120];
-heuristica[1] = [-20, -40, -5, -5, -5, -5, -40, -20];
-heuristica[2] = [20, -5, 15, 3, 3, 15, -5, -20];
-heuristica[3] = [5, -5, 3, 3, 3, 3, -5, 5];
-heuristica[4] = [5, -5, 3, 3, 3, 3, -5, 5];
-heuristica[5] = [20, -5, 15, 3, 3, 15, -5, -20];
-heuristica[6] = [-20, -40, -5, -5, -5, -5, -40, -20];
-heuristica[7] = [120, -20, 20, 5, 5, 20, -20, 120];
+heuristica[0] = [100, -20, 10, 5, 5, 10, -20, 100];
+heuristica[1] = [-20, -50, -2, -2, -2, -2, -50, -20];
+heuristica[2] = [10, -2, -1, -1, -1, -1, -2, 10];
+heuristica[3] = [5, -2, -1, -1, -1, -1, -2, 5];
+heuristica[4] = [5, -2, -1, -1, -1, -1, -2, 5];
+heuristica[5] = [10, -2, -1, -1, -1, -1, -2, 10];
+heuristica[6] = [-20, -50, -2, -2, -2, -2, -50, -20];
+heuristica[7] = [100, -20, 10, 5, 5, 10, -20, 100];
 
 function mapToMatrix(estado) {
   let iterador = 0;
@@ -204,13 +204,10 @@ function getValidMoves(turno, posiciones, tablero) {
   let column = 0;
   let valid_moves = [];
 
-  // try {
-  // console.dir(posiciones);
   for (let i = 0; i < posiciones.length; i++) {
     row = posiciones[i].row;
     column = posiciones[i].column;
     value = posiciones[i].value;
-    // una casilla tiene 8 vecinos si NO esta en los bordes del tablero.
     if (row > 0 && row < 7 && column > 0 && column < 7) {
       let N = tablero[row - 1][column];
       let NE = tablero[row - 1][column + 1];
@@ -629,15 +626,7 @@ function getValidMoves(turno, posiciones, tablero) {
         });
       }
     }
-    // Una casilla tiene
-    // Aumenta el contador de posisiones validas.
   }
-  // console.log(valid_moves);
-  // } catch (error) {
-  //   console.log("Error de no se porque realmente");
-  // }
-  // console.log("Movimientos validos");
-  // console.log(valid_moves);
   return valid_moves;
 }
 
@@ -647,24 +636,6 @@ function showtablero(tablero) {
     console.log(tablero[i]);
   }
 }
-
-// function moveTo(posibles_movimientos) {
-//   if (posibles_movimientos.length > 0) {
-//     let max = -99999;
-//     let max_index = 0;
-//     for (let i = 0; i < posibles_movimientos.length; i++) {
-//       if (posibles_movimientos[i].heuristica > max) {
-//         max = posibles_movimientos[i].heuristica;
-//         max_index = i;
-//       }
-//     }
-//     let o = posibles_movimientos[max_index];
-//     if (gametablero[o.row][o.column] === 2) {
-//       return `${o.row}${o.column}`;
-//     }
-//   }
-//   return "00";
-// }
 
 function imprimirValor(posicion) {
   return gametablero[posicion.row][posicion.column];
@@ -684,17 +655,6 @@ function moveTo(movimientos, turno, max, index) {
   console.log("Turno: " + turno + " OCUPADO POR " + imprimirValor(res));
   console.dir(res);
 
-  // if (gametablero[res.row][res.column] == 1) {
-  //   console.log("Tengo un turno repetidoiii");
-  //   return moveTo(movimientos, turno, max, index);
-  // }
-  // if (gametablero[res.row][res.column] == 0) {
-  //   console.log("Ficha enemiga en esta posición buscar en la proxima");
-  //   return moveTo(movimientos, turno, max, index);
-  // }
-  // console.log("Regresando solución");
-  // console.log("En base a los movimientos");
-  // console.dir(movimientos);
   return `${res.row}${res.column}`;
 }
 
@@ -703,24 +663,15 @@ app.get("/", (req, res) => {
   let estado = req.query.estado;
   if (estado) {
     mapToMatrix(estado);
-    {
-    }
-    // Recuperamos las fichas de nuestra posicion.
     let posiciones = getMyposiciones(turno, gametablero);
     let valid_moves = getValidMoves(turno, posiciones, gametablero);
-    // Analizando opciones Min Max
-    //
-    // arbol de un solo nivel
-
     let arbol = [];
-    // console.log(valid_moves);
-    // showtablero(gametablero);
     for (let i = 0; i < valid_moves.length; i++) {
       let result = followTrail(valid_moves[i], valid_moves[i].value);
       if (result && result != 0) {
-        // if (gametablero[result.row][result.column] == "2") {
-        arbol.push(result);
-        // }
+        if (gametablero[result.row][result.column] == "2") {
+          arbol.push(result);
+        }
       }
     }
     console.log("ARBOL");
