@@ -8,14 +8,14 @@ for (let i = 0; i < gametablero.length; i++) {
 }
 
 const heuristica = new Array(8);
-heuristica[0] = [100, -20, 10, 5, 5, 10, -20, 100];
-heuristica[1] = [-20, -50, -2, -2, -2, -2, -50, -20];
-heuristica[2] = [10, -2, -1, -1, -1, -1, -2, 10];
-heuristica[3] = [5, -2, -1, -1, -1, -1, -2, 5];
-heuristica[4] = [5, -2, -1, -1, -1, -1, -2, 5];
-heuristica[5] = [10, -2, -1, -1, -1, -1, -2, 10];
-heuristica[6] = [-20, -50, -2, -2, -2, -2, -50, -20];
-heuristica[7] = [100, -20, 10, 5, 5, 10, -20, 100];
+heuristica[0] = [25, -5, 15, 10, 10, 15, -5, 25];
+heuristica[1] = [-5, -10, -4, 2, 2, -4, -10, -5];
+heuristica[2] = [15, -4, 3, 4, 4, 3, -4, 15];
+heuristica[3] = [10, 2, 4, 0, 0, 4, 2, 10];
+heuristica[4] = [10, 2, 4, 0, 0, 4, 2, 10];
+heuristica[5] = [15, -4, 3, 4, 4, 3, -4, 15];
+heuristica[6] = [-5, -10, -4, 2, 2, -4, -10, -5];
+heuristica[7] = [25, -5, 15, 10, 10, 15, -5, 25];
 
 function mapToMatrix(estado) {
   let iterador = 0;
@@ -289,8 +289,7 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    }
-    if (row > 0 && row < 7 && column == 0) {
+    } else if (row > 0 && row < 7 && column == 0) {
       let N = tablero[row - 1][column];
       let NE = tablero[row - 1][column + 1];
       let E = tablero[row][column + 1];
@@ -341,8 +340,7 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    }
-    if (row > 0 && row < 7 && column == 7) {
+    } else if (row > 0 && row < 7 && column == 7) {
       let N = tablero[row - 1][column];
       let S = tablero[row + 1][column];
       let SO = tablero[row + 1][column - 1];
@@ -393,8 +391,7 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    }
-    if (column > 0 && column < 7 && row == 0) {
+    } else if (column > 0 && column < 7 && row == 0) {
       let E = tablero[row][column + 1];
       let SE = tablero[row + 1][column + 1];
       let S = tablero[row + 1][column];
@@ -445,8 +442,7 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    }
-    if (column > 0 && column < 7 && row == 7) {
+    } else if (column > 0 && column < 7 && row == 7) {
       let N = tablero[row - 1][column];
       let NE = tablero[row - 1][column + 1];
       let E = tablero[row][column + 1];
@@ -497,8 +493,7 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    }
-    if (column == 0 && row == 0) {
+    } else if (column == 0 && row == 0) {
       let E = tablero[row][column + 1];
       let SE = tablero[row + 1][column + 1];
       let S = tablero[row + 1][column];
@@ -529,8 +524,7 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    }
-    if (column == 7 && row == 0) {
+    } else if (column == 7 && row == 0) {
       let S = tablero[row + 1][column];
       let SO = tablero[row + 1][column - 1];
       let O = tablero[row][column - 1];
@@ -561,8 +555,7 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    }
-    if (column == 7 && row == 7) {
+    } else if (column == 7 && row == 7) {
       let N = tablero[row - 1][column];
       let O = tablero[row][column - 1];
       let NO = tablero[row - 1][column - 1];
@@ -593,8 +586,7 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    }
-    if (column == 0 && row == 7) {
+    } else if (column == 0 && row == 7) {
       let N = tablero[row - 1][column];
       let NE = tablero[row - 1][column + 1];
       let E = tablero[row][column + 1];
