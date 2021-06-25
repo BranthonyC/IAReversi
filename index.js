@@ -60,14 +60,9 @@ function calcValue(posicion) {
 function keeploking(posicion, turno) {
   // Solamente busco posiciones validas, es decir posiciones en blanco, si de repente
   // tengo todas las fichas en esa direccion de mi color las ignoro.
-  if (gametablero[posicion.row][posicion.column] != turno) {
-    return false;
-  }
-
-  if (gametablero[posicion.row][posicion.column] === 2) {
+  if (gametablero[posicion.row][posicion.column] != 2) {
     return true; // Ya no necesito buscar
   }
-
   return false;
 }
 /**
@@ -87,14 +82,6 @@ function followTrail(posicion, valor) {
   valor += calcValue(posicion);
   try {
     if (posicion.direccion == "N") {
-      // console.log("Going N");
-      // Condicion de salida en busqueda norte
-      // if (posicion.row == 0) {
-      //   return {
-      //     ...posicion,
-      //     heuristica: valor,
-      //   };
-      // }
       let nex_position = {
         ...posicion,
         row: posicion.row - 1,
@@ -103,45 +90,12 @@ function followTrail(posicion, valor) {
       if (keeploking(posicion)) {
         return followTrail(nex_position, calcValue(nex_position));
       }
-
       return {
-        ...nex_position,
-        heuristica: valor + calcValue(nex_position),
-      };
-    }
-
-    if (posicion.direccion == "NE") {
-      // console.log("Going NE");
-      // Condicion de salida en busqueda noroeste
-      // if (posicion.column == 7 || posicion.row == 0) {
-      //   return {
-      //     ...posicion,
-      //     heuristica: valor,
-      //   };
-      // }
-
-      let nex_position = {
         ...posicion,
-        row: posicion.row - 1,
-        column: posicion.column + 1,
-      };
-      if (keeploking(posicion)) {
-        return followTrail(nex_position, calcValue(nex_position));
-      }
-      return {
-        ...nex_position,
         heuristica: valor + calcValue(nex_position),
       };
     }
     if (posicion.direccion == "E") {
-      // console.log("Going E");
-      // Condicion de salida en busqueda este
-      // if (posicion.column == 7) {
-      //   return {
-      //     ...posicion,
-      //     heuristica: valor,
-      //   };
-      // }
       let nex_position = {
         ...posicion,
         row: posicion.row,
@@ -151,19 +105,11 @@ function followTrail(posicion, valor) {
         return followTrail(nex_position, calcValue(nex_position));
       }
       return {
-        ...nex_position,
+        ...posicion,
         heuristica: valor + calcValue(nex_position),
       };
     }
     if (posicion.direccion == "SE") {
-      // console.log("Going SE");
-      // Condicion de salida en busqueda sureste
-      // if (posicion.column == 7 || posicion.row == 7) {
-      //   return {
-      //     ...posicion,
-      //     heuristica: valor,
-      //   };
-      // }
       let nex_position = {
         ...posicion,
         row: posicion.row + 1,
@@ -173,19 +119,11 @@ function followTrail(posicion, valor) {
         return followTrail(nex_position, calcValue(nex_position));
       }
       return {
-        ...nex_position,
+        ...posicion,
         heuristica: valor + calcValue(nex_position),
       };
     }
     if (posicion.direccion == "S") {
-      // console.log("Going S");
-      // Condicion de salida en busqueda sur
-      // if (posicion.row == 7) {
-      //   return {
-      //     ...posicion,
-      //     heuristica: valor,
-      //   };
-      // }
       let nex_position = {
         ...posicion,
         row: posicion.row + 1,
@@ -195,41 +133,11 @@ function followTrail(posicion, valor) {
         return followTrail(nex_position, calcValue(nex_position));
       }
       return {
-        ...nex_position,
-        heuristica: valor + calcValue(nex_position),
-      };
-    }
-    if (posicion.direccion == "SO") {
-      // console.log("Going SO");
-      // Condicion de salida en busqueda sur oeste
-      // if (posicion.column == 0 || posicion.row == 7) {
-      //   return {
-      //     ...posicion,
-      //     heuristica: valor,
-      //   };
-      // }
-      let nex_position = {
         ...posicion,
-        row: posicion.row + 1,
-        column: posicion.column - 1,
-      };
-      if (keeploking(posicion)) {
-        return followTrail(nex_position, calcValue(nex_position));
-      }
-      return {
-        ...nex_position,
-        heuristica: valor + calcValue(nex_position),
+        heuristica: valor + calcValue(posicion),
       };
     }
     if (posicion.direccion == "O") {
-      // console.log("Going O");
-      // Condicion de salida en busqueda oeste
-      // if (posicion.column == 0) {
-      //   return {
-      //     ...posicion,
-      //     heuristica: valor,
-      //   };
-      // }
       let nex_position = {
         ...posicion,
         row: posicion.row,
@@ -239,19 +147,39 @@ function followTrail(posicion, valor) {
         return followTrail(nex_position, calcValue(nex_position));
       }
       return {
-        ...nex_position,
+        ...posicion,
+        heuristica: valor + calcValue(posicion),
+      };
+    }
+    if (posicion.direccion == "NE") {
+      let nex_position = {
+        ...posicion,
+        row: posicion.row - 1,
+        column: posicion.column + 1,
+      };
+      if (keeploking(posicion)) {
+        return followTrail(nex_position, calcValue(nex_position));
+      }
+      return {
+        ...posicion,
+        heuristica: valor + calcValue(posicion),
+      };
+    }
+    if (posicion.direccion == "SO") {
+      let nex_position = {
+        ...posicion,
+        row: posicion.row + 1,
+        column: posicion.column - 1,
+      };
+      if (keeploking(posicion)) {
+        return followTrail(nex_position, calcValue(nex_position));
+      }
+      return {
+        ...posicion,
         heuristica: valor + calcValue(nex_position),
       };
     }
     if (posicion.direccion == "NO") {
-      // console.log("Going No");
-      // Condicion de salida en busqueda noroeste
-      // if (posicion.column == 0 || posicion.row == 0) {
-      //   return {
-      //     ...posicion,
-      //     heuristica: valor,
-      //   };
-      // }
       let nex_position = {
         ...posicion,
         row: posicion.row - 1,
@@ -261,7 +189,7 @@ function followTrail(posicion, valor) {
         return followTrail(nex_position, calcValue(nex_position));
       }
       return {
-        ...nex_position,
+        ...posicion,
         heuristica: valor + calcValue(nex_position),
       };
     }
@@ -364,7 +292,8 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    } else if (row > 0 && row < 7 && column == 0) {
+    }
+    if (row > 0 && row < 7 && column == 0) {
       let N = tablero[row - 1][column];
       let NE = tablero[row - 1][column + 1];
       let E = tablero[row][column + 1];
@@ -415,7 +344,8 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    } else if (row > 0 && row < 7 && column == 7) {
+    }
+    if (row > 0 && row < 7 && column == 7) {
       let N = tablero[row - 1][column];
       let S = tablero[row + 1][column];
       let SO = tablero[row + 1][column - 1];
@@ -466,7 +396,8 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    } else if (column > 0 && column < 7 && row == 0) {
+    }
+    if (column > 0 && column < 7 && row == 0) {
       let E = tablero[row][column + 1];
       let SE = tablero[row + 1][column + 1];
       let S = tablero[row + 1][column];
@@ -517,7 +448,8 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    } else if (column > 0 && column < 7 && row == 7) {
+    }
+    if (column > 0 && column < 7 && row == 7) {
       let N = tablero[row - 1][column];
       let NE = tablero[row - 1][column + 1];
       let E = tablero[row][column + 1];
@@ -568,7 +500,8 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    } else if (column == 0 && row == 0) {
+    }
+    if (column == 0 && row == 0) {
       let E = tablero[row][column + 1];
       let SE = tablero[row + 1][column + 1];
       let S = tablero[row + 1][column];
@@ -599,7 +532,8 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    } else if (column == 7 && row == 0) {
+    }
+    if (column == 7 && row == 0) {
       let S = tablero[row + 1][column];
       let SO = tablero[row + 1][column - 1];
       let O = tablero[row][column - 1];
@@ -630,7 +564,8 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    } else if (column == 7 && row == 7) {
+    }
+    if (column == 7 && row == 7) {
       let N = tablero[row - 1][column];
       let O = tablero[row][column - 1];
       let NO = tablero[row - 1][column - 1];
@@ -661,7 +596,8 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    } else if (column == 0 && row == 7) {
+    }
+    if (column == 0 && row == 7) {
       let N = tablero[row - 1][column];
       let NE = tablero[row - 1][column + 1];
       let E = tablero[row][column + 1];
@@ -692,10 +628,6 @@ function getValidMoves(turno, posiciones, tablero) {
           value: value,
         });
       }
-    } else {
-      console.log("TURNO EN LOS BORDES");
-      console.log("ROW=" + row);
-      console.log("COLUMN=" + column);
     }
     // Una casilla tiene
     // Aumenta el contador de posisiones validas.
@@ -735,7 +667,7 @@ function showtablero(tablero) {
 // }
 
 function imprimirValor(posicion) {
-  console.log(gametablero[posicion.row][posicion.column]);
+  return gametablero[posicion.row][posicion.column];
 }
 function moveTo(movimientos, turno, max, index) {
   if (movimientos.length > 1) {
@@ -749,9 +681,8 @@ function moveTo(movimientos, turno, max, index) {
 
   let res = movimientos.pop();
 
-  console.log("Turno: " + turno + " -La solución es:");
+  console.log("Turno: " + turno + " OCUPADO POR " + imprimirValor(res));
   console.dir(res);
-  imprimirValor(res);
 
   // if (gametablero[res.row][res.column] == 1) {
   //   console.log("Tengo un turno repetidoiii");
