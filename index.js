@@ -8,14 +8,23 @@ for (let i = 0; i < gametablero.length; i++) {
 }
 
 const heuristica = new Array(8);
-heuristica[0] = [25, -5, 15, 10, 10, 15, -5, 25];
-heuristica[1] = [-5, -10, -4, 2, 2, -4, -10, -5];
-heuristica[2] = [15, -4, 3, 4, 4, 3, -4, 15];
-heuristica[3] = [10, 2, 4, 0, 0, 4, 2, 10];
-heuristica[4] = [10, 2, 4, 0, 0, 4, 2, 10];
-heuristica[5] = [15, -4, 3, 4, 4, 3, -4, 15];
-heuristica[6] = [-5, -10, -4, 2, 2, -4, -10, -5];
-heuristica[7] = [25, -5, 15, 10, 10, 15, -5, 25];
+heuristica[0] = [120, -20, 20, 10, 10, 20, -20, 120];
+heuristica[1] = [-20, -40, -5, -5, -5, -5, -40, -20];
+heuristica[2] = [20, -5, 15, 3, 3, 15, -5, 20];
+heuristica[3] = [10, -5, 3, 3, 3, 3, -5, 10];
+heuristica[4] = [10, -5, 3, 3, 3, 3, -5, 10];
+heuristica[5] = [20, -5, 15, 4, 4, 15, -5, 20];
+heuristica[6] = [-20, -40, -5, -5, -5, -5, -40, -20];
+heuristica[7] = [120, -20, 20, 10, 10, 20, -20, 120];
+
+// heuristica[0] = [25, -5, 15, 10, 10, 15, -5, 25];
+// heuristica[1] = [-5, -10, -4, 2, 2, -4, -10, -5];
+// heuristica[2] = [15, -4, 3, 4, 4, 3, -4, 15];
+// heuristica[3] = [10, 2, 4, 3, 3, 4, 2, 10];
+// heuristica[4] = [10, 2, 4, 3, 3, 4, 2, 10];
+// heuristica[5] = [15, -4, 3, 4, 4, 3, -4, 15];
+// heuristica[6] = [-5, -10, -4, 2, 2, -4, -10, -5];
+// heuristica[7] = [25, -5, 15, 10, 10, 15, -5, 25];
 
 function mapToMatrix(estado) {
   let iterador = 0;
@@ -642,7 +651,10 @@ function moveTo(movimientos, turno, max, index) {
     return "00";
   }
 
-  let res = movimientos.pop();
+  let res = {};
+  do {
+    res = movimientos.pop();
+  } while (typeof res === "undefined");
 
   console.log("Turno: " + turno + " OCUPADO POR " + imprimirValor(res));
   console.dir(res);
@@ -660,11 +672,11 @@ app.get("/", (req, res) => {
     let arbol = [];
     for (let i = 0; i < valid_moves.length; i++) {
       let result = followTrail(valid_moves[i], valid_moves[i].value);
-      if (result && result != 0) {
-        if (gametablero[result.row][result.column] == "2") {
-          arbol.push(result);
-        }
-      }
+      // if (result && result != 0) {
+      //   if (gametablero[result.row][result.column] == "2") {
+      arbol.push(result);
+      //   }
+      // }
     }
     console.log("ARBOL");
     console.log(arbol);
